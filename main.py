@@ -29,7 +29,9 @@ class MQTT2InfluxDB():
         if result != mqtt.MQTT_ERR_SUCCESS:
             raise(Exception('MQTT subscribe failed: {}'.format(result)))
 
-        logging.info('MQTT connected and subscribed')
+        logging.info('MQTT connected and subscribed to {n} topics'.format(
+            n=len(topics),
+        ))
 
     def on_message(self, client, userdata, msg):
         points = []
