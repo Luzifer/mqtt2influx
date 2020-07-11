@@ -78,8 +78,8 @@ class MQTT2InfluxDB():
 
         client.connect(
             self.obj_get(os.environ, 'MQTT_HOST', mqtt_config['host']),
-            self.obj_get(os.environ, 'MQTT_HOST',
-                         self.obj_get(mqtt_config, 'host', 1883)),
+            self.obj_get(os.environ, 'MQTT_PORT',
+                         self.obj_get(mqtt_config, 'port', 1883)),
             keepalive=10,
         )
 
