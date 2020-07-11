@@ -102,7 +102,7 @@ if __name__ == '__main__':
         configpath = os.environ['CONFIG_PATH']
 
     logging.basicConfig(
-        datefmt='%m/%d/%Y %I:%M:%S %p',
+        datefmt='%Y-%m-%d %H:%M:%S',
         format='[%(asctime)s][%(levelname)s] %(message)s',
         level=loglevel,
     )
