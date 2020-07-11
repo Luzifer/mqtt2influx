@@ -55,6 +55,10 @@ class MQTT2InfluxDB():
                 ))
 
         if len(points) > 0:
+            logging.info('Submitting {n} datapoints for topic {topic}'.format(
+                n=len(points),
+                topic=msg.topic,
+            ))
             self.influx.submit(points)
 
     def run(self):
@@ -66,19 +70,16 @@ class MQTT2InfluxDB():
         mqtt_config = vault.read_data('secret/mqtt2influx/mqtt')
 
         client.username_pw_set(
-            self.obj_get(mqtt_config, 'user', self.obj_get(
-                os.environ, 'MQTT_USER')),
-            self.obj_get(mqtt_config, 'pass', self.obj_get(
-                os.environ, 'MQTT_PASS')),
+            self.obj_get(os.environ, 'MQTT_USER', mqtt_config['user']),
+            self.obj_get(os.environ, 'MQTT_PASS', mqtt_config['pass']),
         )
 
         logging.debug('Connecting to MQTT broker...')
 
         client.connect(
-            self.obj_get(mqtt_config, 'host', self.obj_get(
-                os.environ, 'MQTT_HOST')),
-            port=self.obj_get(mqtt_config, 'port', self.obj_get(
-                os.environ, 'MQTT_PORT', 1883)),
+            self.obj_get(os.environ, 'MQTT_HOST', mqtt_config['host']),
+            self.obj_get(os.environ, 'MQTT_HOST',
+                         self.obj_get(mqtt_config, 'host', 1883)),
             keepalive=10,
         )
 
