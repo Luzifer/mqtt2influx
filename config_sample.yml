@@ -1,0 +1,21 @@
+---
+
+influx_db: 'mqtt_map'
+
+subscriptions:
+
+  tele/kettle/SENSOR:
+    - metric: power
+      tags:
+        device: kettle
+      transform: !lambda "x: json.loads(x)['ENERGY']['Power']"
+    - metric: current
+      tags:
+        device: kettle
+      transform: !lambda "x: json.loads(x)['ENERGY']['Current']"
+    - metric: voltage
+      tags:
+        device: kettle
+      transform: !lambda "x: json.loads(x)['ENERGY']['Voltage']"
+
+...
