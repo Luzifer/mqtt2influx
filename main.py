@@ -14,8 +14,14 @@ class MQTT2InfluxDB():
         with open(config_path) as cfg_file:
             self.config = yaml.safe_load(cfg_file)
 
-        self.influx = Influx(self.obj_get(
-            self.config, 'influx_db', 'mqtt2influxdb'))
+        influx_config = vault.read_data('secret/mqtt2influx/influxdb')
+        self.mqtt_config = vault.read_data('secret/mqtt2influx/mqtt')
+
+        self.influx = Influx(
+            influx_config['host'], influx_config['port'],
+            influx_config['user'], influx_config['pass'],
+            self.obj_get(self.config, 'influx_db', 'mqtt2influxdb'),
+        )
 
     def obj_get(self, obj, key, default=None):
         if key in obj:
@@ -69,19 +75,17 @@ class MQTT2InfluxDB():
         client.on_connect = self.on_connect
         client.on_message = self.on_message
 
-        mqtt_config = vault.read_data('secret/mqtt2influx/mqtt')
-
         client.username_pw_set(
-            self.obj_get(os.environ, 'MQTT_USER', mqtt_config['user']),
-            self.obj_get(os.environ, 'MQTT_PASS', mqtt_config['pass']),
+            self.obj_get(os.environ, 'MQTT_USER', self.mqtt_config['user']),
+            self.obj_get(os.environ, 'MQTT_PASS', self.mqtt_config['pass']),
         )
 
         logging.debug('Connecting to MQTT broker...')
 
         client.connect(
-            self.obj_get(os.environ, 'MQTT_HOST', mqtt_config['host']),
+            self.obj_get(os.environ, 'MQTT_HOST', self.mqtt_config['host']),
             self.obj_get(os.environ, 'MQTT_PORT',
-                         self.obj_get(mqtt_config, 'port', 1883)),
+                         self.obj_get(self.mqtt_config, 'port', 1883)),
             keepalive=10,
         )
 

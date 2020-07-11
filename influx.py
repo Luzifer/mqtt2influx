@@ -1,15 +1,13 @@
 from influxdb import InfluxDBClient
-import vault
 
 
 class Influx():
 
-    def __init__(self, database):
-        cfg = vault.read_data('secret/mqtt2influx/influxdb')
-
+    def __init__(self, host, port, user, password, database):
+        self.client = InfluxDBClient(host, port,
+                                     user, password,
+                                     database)
         self.database = database
-        self.client = InfluxDBClient(cfg['host'], cfg['port'],
-                                     cfg['user'], cfg['pass'], self.database)
 
     def submit(self, body):
         """
