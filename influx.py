@@ -4,9 +4,15 @@ from influxdb import InfluxDBClient
 class Influx():
 
     def __init__(self, host, port, user, password, database):
-        self.client = InfluxDBClient(host, port,
-                                     user, password,
-                                     database)
+        self.client = InfluxDBClient(
+            host=host,
+            port=port,
+            username=user,
+            password=password,
+            database=database,
+            ssl=True,
+            verify_ssl=True,
+        )
         self.database = database
 
     def submit(self, body):
